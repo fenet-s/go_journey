@@ -69,14 +69,24 @@ func main() {
 	log.Println("connected to MongoDB")
 
 	db := client.Database(databaseName)
-	collection := db.Collection(collectionName)
 
-	taskService := data.NewTaskService(collection)
+	taskCollection := db.Collection(collectionName)
+	userCollection := db.Collection("users")
+
+	taskService := data.TaskService{
+		Collection: taskCollection,
+	}
+	userService := data.UserService{
+		Collection: userCollection,
+	}
 	if err := taskService.EnsureIndexes(context.Background()); err != nil {
 		log.Fatal(err)
 	}
+	if err := userService.EnsureIndexes(context.Background()); err != nil {
+		log.Fatal(err)
+	}
 
-	r := router.SetupRouter(taskService)
+	r := router.SetupRouter(&taskService, &userService)
 
 	if err := r.Run(":" + serverPort); err != nil {
 		log.Fatal(err)

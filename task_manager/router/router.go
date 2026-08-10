@@ -3,23 +3,31 @@ package router
 import (
 	"task_manager/controllers"
 	"task_manager/data"
+	"task_manager/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(service *data.TaskService) *gin.Engine {
+func SetupRouter(service *data.TaskService, userService *data.UserService) *gin.Engine {
 
 	r := gin.Default()
 
 	taskController := controllers.TaskController{
-		Service: service,
+		Service:     service,
+		UserService: userService,
 	}
+	r.POST("/login", taskController.Login)
+	r.POST("/register", taskController.Register)
+	protected := r.Group("/tasks")
+	protected.Use(middleware.AuthMiddleware())
 
-	r.GET("/tasks", taskController.GetTasks)
-	r.GET("/tasks/:id", taskController.GetTask)
-	r.POST("/tasks", taskController.CreateTask)
-	r.PUT("/tasks/:id", taskController.UpdateTask)
-	r.DELETE("/tasks/:id", taskController.DeleteTask)
+	protected.GET("", taskController.GetTasks)
+	protected.GET("/:id", taskController.GetTask)
+	protected.POST("", taskController.CreateTask)
+	protected.PUT("/:id", taskController.UpdateTask)
+	admin := protected.Group("")
+	admin.Use(middleware.RequireRole("admin"))
+	admin.DELETE("/:id", taskController.DeleteTask)
 
 	return r
 }
