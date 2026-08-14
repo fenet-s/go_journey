@@ -126,8 +126,19 @@ func (uc *UserController) Register(c *gin.Context) {
 		c.JSON(statusFor(err), gin.H{"error": err.Error()})
 		return
 	}
-	user.Password = ""
-	c.JSON(http.StatusCreated, user)
+
+	type response struct {
+		Message string `json:"message"`
+		ID      string `json:"id"`
+		Email   string `json:"email"`
+		Role    string `json:"role"`
+	}
+	c.JSON(http.StatusCreated, response{
+		Message: "user registered successfully",
+		ID:      user.ID.Hex(),
+		Email:   user.Email,
+		Role:    user.Role,
+	})
 }
 
 func (uc *UserController) Login(c *gin.Context) {
