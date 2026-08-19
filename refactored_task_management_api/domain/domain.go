@@ -23,12 +23,13 @@ const (
 )
 
 var (
-	ErrTaskNotFound = errors.New("task not found")
-	ErrUserNotFound = errors.New("user not found")
-	ErrUserExists   = errors.New("user already exists")
-	ErrInvalidCreds = errors.New("invalid credentials")
-	ErrUnauthorized = errors.New("unauthorized access")
-	ErrEmptyTitle   = errors.New("title cannot be empty")
+	ErrTaskNotFound  = errors.New("task not found")
+	ErrUserNotFound  = errors.New("user not found")
+	ErrUserExists    = errors.New("user already exists")
+	ErrInvalidCreds  = errors.New("invalid credentials")
+	ErrUnauthorized  = errors.New("unauthorized access")
+	ErrEmptyTitle    = errors.New("title cannot be empty")
+	ErrHashingFailed = errors.New("password hashing failed")
 )
 
 type Claims struct {
